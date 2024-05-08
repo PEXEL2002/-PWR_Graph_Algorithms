@@ -14,6 +14,10 @@ private:
     int numVertices;
 
 public:
+/**
+ * @brief Konstruktor klasy ListGraph
+ * @param filePath ścieżka do pliku z danymi grafu
+*/
     ListGraph(const std::string& filePath) {
         std::ifstream file(filePath);
         if (!file.is_open()) {
@@ -41,14 +45,21 @@ public:
 
         file.close();
     }
-
+/**
+ * @brief Funkcja dodająca krawędź do grafu
+ * @param v wierzchołek początkowy
+ * @param w wierzchołek końcowy
+ * @param weight waga krawędzi
+*/
     void addEdge(int v, int w, int weight) override {
         if (v >= numVertices || w < 0) {
             throw std::out_of_range("Vertex index out of valid range");
         }
         adjacencyList[v].push_back({w, weight});
     }
-
+/**
+ * @brief Funkcja wypisująca listę sąsiedztwa grafu
+*/
     void print() override {
         for (int i = 0; i < numVertices; i++) {
             std::cout << i << ": ";
@@ -58,9 +69,19 @@ public:
             std::cout << std::endl;
         }
     }
-
-    void dijkstraAlgorithm(int startVertex) override {
-        // Dijkstra's algorithm will be implemented here.
-        std::cout << "Dijkstra's algorithm not implemented yet." << std::endl;
+/**
+ * @brief Funkcja implementująca algorytm Dijkstry do wszystkich wierzchołków
+*/
+    // Placeholder for Dijkstra's algorithm
+    void dijkstraAlgorithmToAll(int startVertex) override{
+        std::cout << "Dijkstra's algorithm not implemented yet.";
+    }
+/**
+ * @brief Funkcja implementująca algorytm Dijkstry do jednego wierzchołka
+ * @param startVertex wierzchołek startowy
+ * @param endVertex wierzchołek końcowy
+*/
+    void dijkstraAlgorithmToPoint(int startVertex, int endVertex) override{
+        std::cout << "Dijkstra's algorithm not implemented yet.";
     }
 };

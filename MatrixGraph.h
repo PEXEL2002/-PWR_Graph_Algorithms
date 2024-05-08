@@ -15,7 +15,7 @@ public:
 /**
  * @brief Konstruktor klasy MatrixGraph
  * @param filePath ścieżka do pliku z danymi grafu
- */
+*/
     MatrixGraph(const std::string& filePath) {
         std::ifstream file(filePath);
         if (!file.is_open()) {
@@ -52,7 +52,7 @@ public:
  * @param v wierzchołek początkowy
  * @param w wierzchołek końcowy
  * @param weight waga krawędzi
- */
+*/
     void addEdge(int v, int w, int weight) {
         if (v >= _numVertices || w >= _numVertices || v < 0 || w < 0) {
             throw std::out_of_range("Vertex index out of valid range");
@@ -62,7 +62,7 @@ public:
 
 /**
  * @brief Funkcja wypisująca macierz sąsiedztwa grafu
- */
+*/
     void print() {
         for (int i = 0; i < _numVertices; i++) {
             for (int j = 0; j < _numVertices; j++) {
@@ -71,9 +71,19 @@ public:
             std::cout << std::endl;
         }
     }
-
+/**
+ * @brief Funkcja implementująca algorytm Dijkstry do wszystkich wierzchołków
+*/
     // Placeholder for Dijkstra's algorithm
-    void dijkstraAlgorithm(int startVertex) {
+    void dijkstraAlgorithmToAll(int startVertex) override{
+        std::cout << "Dijkstra's algorithm not implemented yet.";
+    }
+/**
+ * @brief Funkcja implementująca algorytm Dijkstry do jednego wierzchołka
+ * @param startVertex wierzchołek startowy
+ * @param endVertex wierzchołek końcowy
+*/
+    void dijkstraAlgorithmToPoint(int startVertex, int endVertex) override{
         std::cout << "Dijkstra's algorithm not implemented yet.";
     }
 };
