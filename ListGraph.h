@@ -71,17 +71,21 @@ public:
     }
 /**
  * @brief Funkcja implementująca algorytm Dijkstry do wszystkich wierzchołków
+ * @param startVertex wierzchołek startowy
+ * @param outputToFile czy wynik ma być zapisany do pliku 1 - tak, 0 - nie
+ * @param outputToFileName nazwa pliku do zapisu wyniku
 */
-    // Placeholder for Dijkstra's algorithm
-    void dijkstraAlgorithmToAll(int startVertex) override{
+    void dijkstraAlgorithmToAll(int startVertex, bool outputToFile, std::string outputToFileName) override{
         std::cout << "Dijkstra's algorithm not implemented yet.";
     }
 /**
- * @brief Funkcja implementująca algorytm Dijkstry do jednego wierzchołka
+ * @brief Funkcja implementująca algorytm Dijkstry do wszystkich wierzchołków
  * @param startVertex wierzchołek startowy
  * @param endVertex wierzchołek końcowy
+ * @param outputToFile czy wynik ma być zapisany do pliku 1 - tak, 0 - nie
+ * @param outputToFileName nazwa pliku do zapisu wyniku
 */
-    void dijkstraAlgorithmToPoint(int startVertex, int endVertex) override{
+    void dijkstraAlgorithmToPoint(int startVertex, int endVertex, bool outputToFile, std::string outputToFileName) override{
         std::cout << "Dijkstra's algorithm not implemented yet.";
     }
 };
