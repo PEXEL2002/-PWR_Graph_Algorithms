@@ -61,6 +61,7 @@ public:
  * @brief Funkcja wypisująca listę sąsiedztwa grafu
 */
     void print() override {
+        std::cout << "List: " << std::endl;
         for (int i = 0; i < numVertices; i++) {
             std::cout << i << ": ";
             for (const auto& edge : adjacencyList[i]) {
@@ -72,20 +73,110 @@ public:
 /**
  * @brief Funkcja implementująca algorytm Dijkstry do wszystkich wierzchołków
  * @param startVertex wierzchołek startowy
- * @param outputToFile czy wynik ma być zapisany do pliku 1 - tak, 0 - nie
- * @param outputToFileName nazwa pliku do zapisu wyniku
 */
-    void dijkstraAlgorithmToAll(int startVertex, bool outputToFile, std::string outputToFileName) override{
-        std::cout << "Dijkstra's algorithm not implemented yet.";
+    void dijkstraAlgorithmToAll(int startVertex) override{
+        if (startVertex >= numVertices || startVertex < 0) {
+            throw std::out_of_range("Vertex index out of valid range");
+        }
+        std::vector<int> distance(numVertices, INT_MAX);
+        std::vector<bool> visited(numVertices, false);
+        std::vector<int> predecessor(numVertices, -1);
+        distance[startVertex] = 0;
+        for(int i = 0; i < numVertices - 1; i++){
+            int u = -1;
+            for(int j = 0; j < numVertices; j++){
+                if(!visited[j] && (u == -1 || distance[j] < distance[u])){
+                    u = j;
+                }
+            }
+            visited[u] = true;
+            for(const auto& edge : adjacencyList[u]){
+                int v = edge.first;
+                int weight = edge.second;
+                if(distance[u] != INT_MAX && distance[u] + weight < distance[v]){
+                    distance[v] = distance[u] + weight;
+                    predecessor[v] = u;
+                }
+            }
+        }
+        std::cout << "Dijkstra List: " << std::endl;
+        for(int i = 0; i < numVertices; i++){
+            if (i == startVertex) continue; // Skip start vertex
+            if(distance[i] == INT_MAX){
+            std::cout << "No path from " << startVertex+1 << " to " << i+1 << std::endl;
+            } else {
+            std::cout << "Distance from " << startVertex+1 << " to " << i+1 << " is " << distance[i];
+            std::vector<int> path;
+            int currentVertex = i;
+            while(currentVertex != startVertex){
+                path.push_back(currentVertex);
+                currentVertex = predecessor[currentVertex];
+            }
+            path.push_back(startVertex);
+            std::cout << " Path: ";
+            for(int j = path.size() - 1; j >= 0; j--){
+                std::cout << path[j] + 1;
+                if(j != 0){
+                std::cout << " ";
+                }
+            }
+            std::cout << std::endl;
+            }
+        }
     }
 /**
  * @brief Funkcja implementująca algorytm Dijkstry do wszystkich wierzchołków
  * @param startVertex wierzchołek startowy
  * @param endVertex wierzchołek końcowy
- * @param outputToFile czy wynik ma być zapisany do pliku 1 - tak, 0 - nie
- * @param outputToFileName nazwa pliku do zapisu wyniku
 */
-    void dijkstraAlgorithmToPoint(int startVertex, int endVertex, bool outputToFile, std::string outputToFileName) override{
-        std::cout << "Dijkstra's algorithm not implemented yet.";
+    void dijkstraAlgorithmToPoint(int startVertex, int endVertex) override{
+        if(startVertex >= numVertices || endVertex >= numVertices || startVertex < 0 || endVertex < 0){
+            throw std::out_of_range("Vertex index out of valid range");
+        }
+        if(startVertex == endVertex){
+            throw std::invalid_argument("Start and end vertex are the same");
+        }
+        std::vector<int> distance(numVertices, INT_MAX);
+        std::vector<bool> visited(numVertices, false);
+        std::vector<int> predecessor(numVertices, -1);
+        distance[startVertex] = 0;
+        for(int i = 0; i < numVertices - 1; i++){
+            int u = -1;
+            for(int j = 0; j < numVertices; j++){
+                if(!visited[j] && (u == -1 || distance[j] < distance[u])){
+                    u = j;
+                }
+            }
+            visited[u] = true;
+            for(const auto& edge : adjacencyList[u]){
+                int v = edge.first;
+                int weight = edge.second;
+                if(distance[u] != INT_MAX && distance[u] + weight < distance[v]){
+                    distance[v] = distance[u] + weight;
+                    predecessor[v] = u;
+                }
+            }
+        }
+        if(distance[endVertex] == INT_MAX){
+            std::cout << "No path from " << startVertex << " to " << endVertex << std::endl;
+        } else {
+            std::cout << "Dijkstra List: " << std::endl;
+            std::cout << "Distance from " << startVertex+1 << " to " << endVertex+1 << " is " << distance[endVertex];
+            std::vector<int> path;
+            int currentVertex = endVertex;
+            while(currentVertex != startVertex){
+                path.push_back(currentVertex);
+                currentVertex = predecessor[currentVertex];
+            }
+            path.push_back(startVertex);
+            std::cout << " Path: ";
+            for(int i = path.size() - 1; i >= 0; i--){
+                std::cout << path[i] + 1;
+                if(i != 0){
+                    std::cout << " ";
+                }
+            }
+            std::cout << std::endl;
+        }
     }
 };
