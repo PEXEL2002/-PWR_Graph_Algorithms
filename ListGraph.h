@@ -78,19 +78,19 @@ public:
         if (startVertex >= numVertices || startVertex < 0) {
             throw std::out_of_range("Vertex index out of valid range");
         }
-        std::vector<int> distance(numVertices, INT_MAX);
-        std::vector<bool> visited(numVertices, false);
-        std::vector<int> predecessor(numVertices, -1);
-        distance[startVertex] = 0;
-        for(int i = 0; i < numVertices - 1; i++){
+        std::vector<int> distance(numVertices, INT_MAX); // Initialize distances to all vertices as infinity
+        std::vector<bool> visited(numVertices, false); // Initialize all vertices as not visited
+        std::vector<int> predecessor(numVertices, -1); // Initialize all predecessors as -1
+        distance[startVertex] = 0;// Distance from start vertex to itself is 0
+        for(int i = 0; i < numVertices - 1; i++){ // Find shortest path for all vertices
             int u = -1;
-            for(int j = 0; j < numVertices; j++){
+            for(int j = 0; j < numVertices; j++){ // Find the vertex with the minimum distance
                 if(!visited[j] && (u == -1 || distance[j] < distance[u])){
                     u = j;
                 }
             }
             visited[u] = true;
-            for(const auto& edge : adjacencyList[u]){
+            for(const auto& edge : adjacencyList[u]){ // Update distances to all adjacent vertices
                 int v = edge.first;
                 int weight = edge.second;
                 if(distance[u] != INT_MAX && distance[u] + weight < distance[v]){
@@ -99,28 +99,23 @@ public:
                 }
             }
         }
+        // Display all distances and paths
         std::cout << "Dijkstra List: " << std::endl;
         for(int i = 0; i < numVertices; i++){
             if (i == startVertex) continue; // Skip start vertex
-            if(distance[i] == INT_MAX){
-            std::cout << "No path from " << startVertex+1 << " to " << i+1 << std::endl;
-            } else {
             std::cout << "Distance from " << startVertex+1 << " to " << i+1 << " is " << distance[i];
-            std::vector<int> path;
-            int currentVertex = i;
-            while(currentVertex != startVertex){
-                path.push_back(currentVertex);
-                currentVertex = predecessor[currentVertex];
-            }
-            path.push_back(startVertex);
-            std::cout << " Path: ";
-            for(int j = path.size() - 1; j >= 0; j--){
-                std::cout << path[j] + 1;
-                if(j != 0){
-                std::cout << " ";
-                }
-            }
-            std::cout << std::endl;
+            if(distance[i] == INT_MAX){
+                std::cout << " (No path)" << std::endl;
+            } else {
+                std::cout << " Path: ";
+                    std::vector<int> path;
+                    for (int at = i; at != -1; at = predecessor[at]) { //   Construct path
+                        path.insert(path.begin(), at);  // Insert at the    beginning
+                    }
+                    for (int v : path) { // Print path
+                        std::cout << v+1 << " ";
+                    }
+                std::cout << std::endl;
             }
         }
     }
@@ -136,19 +131,19 @@ public:
         if(startVertex == endVertex){
             throw std::invalid_argument("Start and end vertex are the same");
         }
-        std::vector<int> distance(numVertices, INT_MAX);
-        std::vector<bool> visited(numVertices, false);
-        std::vector<int> predecessor(numVertices, -1);
-        distance[startVertex] = 0;
-        for(int i = 0; i < numVertices - 1; i++){
+        std::vector<int> distance(numVertices, INT_MAX); // Initialize distances to all vertices as infinity
+        std::vector<bool> visited(numVertices, false); // Initialize all vertices as not visited
+        std::vector<int> predecessor(numVertices, -1); //  Initialize all predecessors as -1
+        distance[startVertex] = 0; // Distance from start vertex to itself is 0
+        for(int i = 0; i < numVertices - 1; i++){ // Find shortest path for all vertices
             int u = -1;
-            for(int j = 0; j < numVertices; j++){
+            for(int j = 0; j < numVertices; j++){ // Find the vertex with the minimum distance
                 if(!visited[j] && (u == -1 || distance[j] < distance[u])){
                     u = j;
                 }
             }
-            visited[u] = true;
-            for(const auto& edge : adjacencyList[u]){
+            visited[u] = true; 
+            for(const auto& edge : adjacencyList[u]){ // Update distances to all adjacent vertices
                 int v = edge.first;
                 int weight = edge.second;
                 if(distance[u] != INT_MAX && distance[u] + weight < distance[v]){
@@ -157,26 +152,22 @@ public:
                 }
             }
         }
-        if(distance[endVertex] == INT_MAX){
-            std::cout << "No path from " << startVertex << " to " << endVertex << std::endl;
+        // Display distance and path
+        std::cout << "Dijkstra List: " << std::endl;
+        std::cout << "Distance from " << startVertex+1 << " to " << endVertex+1;
+        // Display distance and path
+        if (distance[endVertex] == INT_MAX) { // If there is no path
+            std::cout << ":No path" << std::endl;
         } else {
-            std::cout << "Dijkstra List: " << std::endl;
-            std::cout << "Distance from " << startVertex+1 << " to " << endVertex+1 << " is " << distance[endVertex];
+            std::cout << " is " << distance[endVertex] << " Path: ";
             std::vector<int> path;
-            int currentVertex = endVertex;
-            while(currentVertex != startVertex){
-                path.push_back(currentVertex);
-                currentVertex = predecessor[currentVertex];
+            for (int at = endVertex; at != -1; at = predecessor[at]) { // Construct path
+                path.insert(path.begin(), at);
             }
-            path.push_back(startVertex);
-            std::cout << " Path: ";
-            for(int i = path.size() - 1; i >= 0; i--){
-                std::cout << path[i] + 1;
-                if(i != 0){
-                    std::cout << " ";
-                }
+            for (int v : path) { // Print path
+                std::cout << v+1 << " ";
             }
-            std::cout << std::endl;
         }
-    }
+        std::cout << std::endl;
+        }
 };

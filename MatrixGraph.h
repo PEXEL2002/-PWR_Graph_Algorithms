@@ -128,7 +128,6 @@ public:
  * @brief Funkcja implementująca algorytm Dijkstry do wszystkich wierzchołków
  * @param startVertex wierzchołek startowy
  * @param endVertex wierzchołek końcowy
- * @param tests czy funkcja jest wywoływana w testach 1 - tak, 0 - nie
 */
     void dijkstraAlgorithmToPoint(int startVertex, int endVertex) override {
         if (startVertex >= _numVertices || endVertex >= _numVertices || startVertex < 0 || endVertex < 0) {
@@ -141,7 +140,6 @@ public:
         std::vector<bool> visited(_numVertices, false); // Initialize all vertices as not visited
         std::vector<int> predecessor(_numVertices, -1); //  Initialize all predecessors as -1
         distance[startVertex] = 0; // Distance from start vertex to itself is 0
-
         for (int i = 0; i < _numVertices; i++) { // Find shortest path for all vertices
             int minDistance = INT_MAX;
             int minIndex = -1;
@@ -159,7 +157,7 @@ public:
                 }
             }
         }
-    std::cout << "Dijkstra Matrix: " << std::endl;
+        std::cout << "Dijkstra Matrix: " << std::endl;
         std::cout << "Distance from " << startVertex+1 << " to " << endVertex+1;
         // Display distance and path
         if (distance[endVertex] == INT_MAX) { // If there is no path
