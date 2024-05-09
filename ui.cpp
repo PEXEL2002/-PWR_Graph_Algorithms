@@ -15,9 +15,9 @@ void generateGraphData(int vertices, int density) {
     std::uniform_int_distribution<> weightDis(1, 100);  // Zakres wag od 1 do 100
     
     int maxEdges = vertices * (vertices - 1) / 2;
-    int numEdges = static_cast<int>(maxEdges * (density/100));
-    std::string matrixFileName = "matrix"+std::to_string(vertices)+std::to_string(density)+".txt";
-    std::string listFileName = "list"+std::to_string(vertices)+std::to_string(density)+".txt";
+    int numEdges = static_cast<int>(maxEdges * (density / 100.0));  // Poprawka na prawidłowe obliczenie procenta
+    std::string matrixFileName = "matrix_" + std::to_string(vertices) + "_" + std::to_string(density) + ".txt";
+    std::string listFileName = "list_" + std::to_string(vertices) + "_" + std::to_string(density) + ".txt";
 
     std::set<std::pair<int, int>> edges;
     while (edges.size() < numEdges) {
@@ -39,7 +39,7 @@ void generateGraphData(int vertices, int density) {
     // Zapisywanie do pliku - macierz sąsiedztwa
     std::ofstream matrixFile(matrixFileName);
     if (!matrixFile) {
-        std::cerr << "Nie można otworzyć pliku: " << matrixFileName << std::endl;
+        std::cerr << "Nie można otworzyć pliku do zapisu: " << matrixFileName << std::endl;
         return;
     }
     for (const auto& row : matrix) {
@@ -53,7 +53,7 @@ void generateGraphData(int vertices, int density) {
     // Zapisywanie do pliku - lista sąsiedztwa
     std::ofstream listFile(listFileName);
     if (!listFile) {
-        std::cerr << "Nie można otworzyć pliku: " << listFileName << std::endl;
+        std::cerr << "Nie można otworzyć pliku do zapisu: " << listFileName << std::endl;
         return;
     }
     for (const auto& row : list) {

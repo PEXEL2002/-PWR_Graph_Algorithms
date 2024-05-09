@@ -105,7 +105,7 @@ public:
         // Display all distances and paths
         for (int i = 0; i < _numVertices; i++) {
             if (i == startVertex) continue; // Skip start vertex
-            std::cout << "Distance from " << startVertex << " to " << i << " is " << distance[i];
+            std::cout << "Distance from " << startVertex+1 << " to " << i+1 << " is " << distance[i];
             if (distance[i] == INT_MAX) {
                 std::cout << " (No path)" << std::endl;
             } else {
@@ -115,7 +115,7 @@ public:
                     path.insert(path.begin(), at);  // Insert at the beginning
                 }
                 for (int v : path) { // Print path
-                    std::cout << v << " ";
+                    std::cout << v+1 << " ";
                 }
                 std::cout << std::endl;
             }
@@ -157,7 +157,7 @@ public:
             }
         }
 
-        std::cout << "Distance from " << startVertex << " to " << endVertex;
+        std::cout << "Distance from " << startVertex+1 << " to " << endVertex+1;
         // Display distance and path
         if (distance[endVertex] == INT_MAX) { // If there is no path
             std::cout << ":No path" << std::endl;
@@ -168,7 +168,7 @@ public:
                 path.insert(path.begin(), at);
             }
             for (int v : path) { // Print path
-                std::cout << v << " ";
+                std::cout << v+1 << " ";
             }
         }
     }
