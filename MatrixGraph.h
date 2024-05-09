@@ -64,6 +64,7 @@ public:
  * @brief Funkcja wypisująca macierz sąsiedztwa grafu
 */
     void print() {
+        std::cout << "Matrix: " << std::endl;
         for (int i = 0; i < _numVertices; i++) {
             for (int j = 0; j < _numVertices; j++) {
                 std::cout << _adjMatrix[i][j] << " ";
@@ -103,6 +104,7 @@ public:
         }
 
         // Display all distances and paths
+        std::cout << "Dijkstra Matrix: " << std::endl;
         for (int i = 0; i < _numVertices; i++) {
             if (i == startVertex) continue; // Skip start vertex
             std::cout << "Distance from " << startVertex+1 << " to " << i+1 << " is " << distance[i];
@@ -120,6 +122,7 @@ public:
                 std::cout << std::endl;
             }
         }
+        std::cout << std::endl;
     }
 /**
  * @brief Funkcja implementująca algorytm Dijkstry do wszystkich wierzchołków
@@ -156,7 +159,7 @@ public:
                 }
             }
         }
-
+    std::cout << "Dijkstra Matrix: " << std::endl;
         std::cout << "Distance from " << startVertex+1 << " to " << endVertex+1;
         // Display distance and path
         if (distance[endVertex] == INT_MAX) { // If there is no path
@@ -171,5 +174,6 @@ public:
                 std::cout << v+1 << " ";
             }
         }
+        std::cout << std::endl;
     }
 };
