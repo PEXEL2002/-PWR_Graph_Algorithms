@@ -9,6 +9,12 @@
 */
 void generateGraphData(int vertices, int density, std::string fileName = "");
 /**
+ * @brief Funkcja generująca losowe wierzchołki
+ * @param maxVertices maksymalna liczba wierzchołków
+ * @return wieszchołek
+*/
+int generateVertices(int maxVertices);
+/**
  * @brief Funkcja przprowadzająca algorytm Dijkstry do wszystkich wierzchołków
  * @param mG graf w postaci macierzy sąsiedztwa
  * @param lG graf w postaci listy sąsiedztwa

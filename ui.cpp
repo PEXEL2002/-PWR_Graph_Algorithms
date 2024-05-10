@@ -76,7 +76,9 @@ void generateGraphData(int vertices, int density, std::string fileName = "") {
     }
     listFile.close();
 }
-
+int generateVertices(int maxVertices){
+    return rand() % maxVertices;
+}
 void uiDijkstraAll(MatrixGraph& mG, ListGraph& lG) {
     int startVertex;
     std::cout << "Podaj wierzchołek startowy: ";
@@ -124,5 +126,61 @@ void uiprintGraph(MatrixGraph& mG, ListGraph& lG) {
 }
 
 void testGraph() {
-    std::cout << "In progress\n";
+    std::vector<int> sizeV = {10, 50, 100, 500, 1000};
+    std::vector<int> density = {25, 50, 75, 100};
+    long long int timeMatrix = 0, timeMatrix1 = 0;
+    long long int timeList = 0, timeList1 = 0;
+    int startVertex = 0;
+    int endVertex = 0;
+    
+    std::ofstream saveFile("data.csv");
+    if (!saveFile.is_open()) {
+        std::cerr << "Nie można otworzyć pliku data.csv\n";
+        return;
+    }
+    saveFile << "Operation;Type;Vertices;Density;Time\n";
+
+    for (int vertices : sizeV) {
+        for (int dens : density) {
+            timeMatrix = 0;
+            timeList = 0;
+            for (int i = 0; i < 100; i++) {
+                generateGraphData(vertices, dens, "test");
+                startVertex = generateVertices(vertices);
+                endVertex = generateVertices(vertices);
+                MatrixGraph* mG = new MatrixGraph("matrix_test.txt");
+                ListGraph* lG = new ListGraph("list_test.txt");
+
+                auto start1 = std::chrono::high_resolution_clock::now();
+                mG->dijkstraAlgorithmToAll(startVertex);
+                auto end1 = std::chrono::high_resolution_clock::now();
+                timeMatrix += std::chrono::duration_cast<std::chrono::nanoseconds>(end1 - start1).count();
+
+                auto start2 = std::chrono::high_resolution_clock::now();
+                lG->dijkstraAlgorithmToAll(startVertex);
+                auto end2 = std::chrono::high_resolution_clock::now();
+                timeList += std::chrono::duration_cast<std::chrono::nanoseconds>(end2 - start2).count();
+                
+                startVertex = generateVertices(vertices);
+                endVertex = generateVertices(vertices);
+
+                auto start3 = std::chrono::high_resolution_clock::now();
+                mG->dijkstraAlgorithmToPoint(startVertex, endVertex);
+                auto end3 = std::chrono::high_resolution_clock::now();
+                timeMatrix1 += std::chrono::duration_cast<std::chrono::nanoseconds>(end3 - start3).count();
+
+                auto start4 = std::chrono::high_resolution_clock::now();
+                lG->dijkstraAlgorithmToPoint(startVertex, endVertex);
+                auto end4 = std::chrono::high_resolution_clock::now();
+                timeList1 += std::chrono::duration_cast<std::chrono::nanoseconds>(end4 - start4).count();
+                delete lG;
+                delete mG;
+            }
+            saveFile << "dijkstraAlgorithmToAll;Matrix;" << vertices << ";" << dens << ";" << timeMatrix / 100 << "\n";
+            saveFile << "dijkstraAlgorithmToAll;List;" << vertices << ";" << dens<< ";" << timeList / 100 << "\n";
+            saveFile << "dijkstraAlgorithmToPoint;Matrix;" << vertices << ";" << dens << ";" << timeMatrix1/100 << "\n";
+            saveFile << "dijkstraAlgorithmToPoint;List;" << vertices << ";" << dens << ";" << timeList1/100 << "\n";
+        }
+    }
+    saveFile.close();
 }
