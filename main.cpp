@@ -13,7 +13,7 @@ int main(){
         cin >> test;
     }while(test!=0 && test!=1);
     if(test){
-        //testGraph();
+        testGraph();
     }else{
         int choice = 1;
         int density = -1;
