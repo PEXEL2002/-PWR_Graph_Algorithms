@@ -1,4 +1,10 @@
 #include "MatrixGraph.h"
+#include <vector>
+#include <queue>
+#include <limits>
+#include <iostream>
+#include <set>
+
 MatrixGraph::MatrixGraph(const std::string& filePath) {
     std::ifstream file(filePath);
     if (!file.is_open()) {
@@ -44,95 +50,70 @@ void MatrixGraph::print() {
     }
 }
 void MatrixGraph::dijkstraAlgorithmToAll(int startVertex) {
-    if (startVertex >= _numVertices || startVertex < 0) {
-        throw std::out_of_range("Vertex index out of valid range");
-    }
-    std::vector<int> distance(_numVertices, INT_MAX); // Initialize distances to all vertices as infinity
-    std::vector<bool> visited(_numVertices, false); // Initialize all vertices as not visited
-    std::vector<int> predecessor(_numVertices, -1); // Initialize all predecessors as -1
-    distance[startVertex] = 0; // Distance from start vertex to itself is 0
+    std::vector<int> distances(_numVertices, std::numeric_limits<int>::max());
+    std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<std::pair<int, int>>> pq;
 
-    for (int i = 0; i < _numVertices; i++) { // Find shortest path for all vertices
-        int minDistance = INT_MAX;
-        int minIndex = -1;
-        for (int j = 0; j < _numVertices; j++) { // Find the vertex with the minimum distance
-            if (!visited[j] && distance[j] <= minDistance) {
-                minDistance = distance[j];
-                minIndex = j;
-            }
-        }
-        visited[minIndex] = true;
-        for (int j = 0; j < _numVertices; j++) { // Update distances to all adjacent vertices
-            if (!visited[j] && _adjMatrix[minIndex][j] && distance[minIndex] != INT_MAX && distance[minIndex] + _adjMatrix[minIndex][j] < distance[j]) {
-                distance[j] = distance[minIndex] + _adjMatrix[minIndex][j];
-                predecessor[j] = minIndex;
+    distances[startVertex] = 0;
+    pq.push({0, startVertex});
+
+    while (!pq.empty()) { // while there are still vertices to visit
+        int currentVertex = pq.top().second;
+        pq.pop();
+
+        for (int adjacent = 0; adjacent < _numVertices; adjacent++) { // iterate through all vertices
+            if (_adjMatrix[currentVertex][adjacent] != 0) { // Assuming 0 as no edge
+                int weight = _adjMatrix[currentVertex][adjacent];
+                if (distances[currentVertex] + weight < distances[adjacent]) {
+                    distances[adjacent] = distances[currentVertex] + weight;
+                    pq.push({distances[adjacent], adjacent});
+                }
             }
         }
     }
 
-    // Display all distances and paths
-    std::cout << "Dijkstra Matrix: " << std::endl;
+    // Print or process distances
     for (int i = 0; i < _numVertices; i++) {
-        if (i == startVertex) continue; // Skip start vertex
-        std::cout << "Distance from " << startVertex+1 << " to " << i+1 << " is " << distance[i];
-        if (distance[i] == INT_MAX) {
-            std::cout << " (No path)" << std::endl;
-        } else {
-            std::cout << " Path: ";
-            std::vector<int> path;
-            for (int at = i; at != -1; at = predecessor[at]) { // Construct path
-                path.insert(path.begin(), at);  // Insert at the beginning
+        if(distances[i] != std::numeric_limits<int>::max()){
+            if(i == startVertex){
+                continue;
+            }else{
+                std::cout << "Najkrótsza ścieżka od wierzchołka " << startVertex << " do wierzchołka " << i << " wynosi " << distances[i] << std::endl;
             }
-            for (int v : path) { // Print path
-                std::cout << v+1 << " ";
-            }
-            std::cout << std::endl;
         }
+        std::cout << "Brak połączenia między wierzchołkiem " << startVertex << " a " << i << std::endl;
     }
-    std::cout << std::endl;
 }
 void MatrixGraph::dijkstraAlgorithmToPoint(int startVertex, int endVertex) {
-    if (startVertex >= _numVertices || endVertex >= _numVertices || startVertex < 0 || endVertex < 0) {
-        throw std::out_of_range("Vertex index out of valid range");
-    }
-    if (startVertex == endVertex) {
-        throw std::invalid_argument("Start and end vertex are the same");
-    }
-    std::vector<int> distance(_numVertices, INT_MAX); // Initialize distances to all vertices as infinity
-    std::vector<bool> visited(_numVertices, false); // Initialize all vertices as not visited
-    std::vector<int> predecessor(_numVertices, -1); //  Initialize all predecessors as -1
-    distance[startVertex] = 0; // Distance from start vertex to itself is 0
-    for (int i = 0; i < _numVertices; i++) { // Find shortest path for all vertices
-        int minDistance = INT_MAX;
-        int minIndex = -1;
-        for (int j = 0; j < _numVertices; j++) { // Find the vertex with the minimum distance
-            if (!visited[j] && distance[j] <= minDistance) {
-                minDistance = distance[j];
-                minIndex = j;
+    std::vector<int> distances(_numVertices, std::numeric_limits<int>::max());
+    std::vector<bool> visited(_numVertices, false);
+    std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<std::pair<int, int>>> pq;
+
+    distances[startVertex] = 0;
+    pq.push({0, startVertex});
+
+    while (!pq.empty()) { // while there are still vertices to visit
+        int currentVertex = pq.top().second;
+        pq.pop();
+        // if currentVertex is the endVertex, print the distance and return
+        if (currentVertex == endVertex) {
+            std::cout << "Najkrótsza ścieżka od wierzchołka " << startVertex << " do wierzchołka " << endVertex << " wynosi " << distances[currentVertex] << std::endl;
+            return;
+        }
+
+        if (visited[currentVertex]) continue;
+        visited[currentVertex] = true;
+
+        for (int adjacent = 0; adjacent < _numVertices; adjacent++) { // iterate through all vertices
+            if (_adjMatrix[currentVertex][adjacent] != 0) {
+                int weight = _adjMatrix[currentVertex][adjacent];
+                if (distances[currentVertex] + weight < distances[adjacent]) {
+                    distances[adjacent] = distances[currentVertex] + weight;
+                    pq.push({distances[adjacent], adjacent});
+                }
             }
         }
-        visited[minIndex] = true;
-        for (int j = 0; j < _numVertices; j++) { // Update distances to all adjacent vertices
-            if (!visited[j] && _adjMatrix[minIndex][j] && distance[minIndex] != INT_MAX && distance[minIndex] + _adjMatrix[minIndex][j] < distance[j]) {
-                distance[j] = distance[minIndex] + _adjMatrix[minIndex][j];
-                predecessor[j] = minIndex;
-            }
-        }
     }
-    std::cout << "Dijkstra Matrix: " << std::endl;
-    std::cout << "Distance from " << startVertex+1 << " to " << endVertex+1;
-    // Display distance and path
-    if (distance[endVertex] == INT_MAX) { // If there is no path
-        std::cout << ":No path" << std::endl;
-    } else {
-        std::cout << " is " << distance[endVertex] << " Path: ";
-        std::vector<int> path;
-        for (int at = endVertex; at != -1; at = predecessor[at]) { // Construct path
-            path.insert(path.begin(), at);
-        }
-        for (int v : path) { // Print path
-            std::cout << v+1 << " ";
-        }
-    }
-    std::cout << std::endl;
+
+    // if the function reaches here, there is no path from startVertex to endVertex
+    std::cout << "Ścieżka od wierzchołka " << startVertex << " do wierzchołka " << endVertex << " nie istnieje." << std::endl;
 }

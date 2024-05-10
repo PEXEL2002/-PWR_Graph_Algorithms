@@ -1,4 +1,9 @@
 #include "ListGraph.h"
+#include <limits>
+#include <queue>
+#include <vector>
+#include <set>
+
 ListGraph::ListGraph(const std::string& filePath) {
     std::ifstream file(filePath);
     if (!file.is_open()) {
@@ -7,7 +12,6 @@ ListGraph::ListGraph(const std::string& filePath) {
 
     std::string line;
     _numVertices = 0;
-    // Czytaj każdą linię pliku, która reprezentuje listę sąsiedztwa jednego wierzchołka
     while (getline(file, line)) {
         std::istringstream iss(line);
         std::string token;
@@ -23,7 +27,6 @@ ListGraph::ListGraph(const std::string& filePath) {
         _adjacencyList.push_back(vertexList);
         _numVertices++;
     }
-
     file.close();
 }
 ListGraph::~ListGraph(){}
@@ -43,94 +46,71 @@ void ListGraph::print() {
         std::cout << std::endl;
     }
 }
-void ListGraph::dijkstraAlgorithmToAll(int startVertex){
-    if (startVertex >= _numVertices || startVertex < 0) {
-        throw std::out_of_range("Vertex index out of valid range");
-    }
-    std::vector<int> distance(_numVertices, INT_MAX); // Initialize distances to all vertices as infinity
-    std::vector<bool> visited(_numVertices, false); // Initialize all vertices as not visited
-    std::vector<int> predecessor(_numVertices, -1); // Initialize all predecessors as -1
-    distance[startVertex] = 0;// Distance from start vertex to itself is 0
-    for(int i = 0; i < _numVertices - 1; i++){ // Find shortest path for all vertices
-        int u = -1;
-        for(int j = 0; j < _numVertices; j++){ // Find the vertex with the minimum distance
-            if(!visited[j] && (u == -1 || distance[j] < distance[u])){
-                u = j;
-            }
-        }
-        visited[u] = true;
-        for(const auto& edge : _adjacencyList[u]){ // Update distances to all adjacent vertices
-            int v = edge.first;
+void ListGraph::dijkstraAlgorithmToAll(int startVertex) {
+    std::vector<int> distances(_numVertices, std::numeric_limits<int>::max());
+    std::vector<bool> visited(_numVertices, false);
+    std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<std::pair<int, int>>> pq;
+
+    distances[startVertex] = 0;
+    pq.push({0, startVertex});
+
+    while (!pq.empty()) {
+        int currentVertex = pq.top().second;
+        pq.pop();
+        if (visited[currentVertex]) continue;
+        visited[currentVertex] = true;
+        for (const auto& edge : _adjacencyList[currentVertex]) { // for each edge in the adjacency list of the current vertex
+            int adjacent = edge.first;
             int weight = edge.second;
-            if(distance[u] != INT_MAX && distance[u] + weight < distance[v]){
-                distance[v] = distance[u] + weight;
-                predecessor[v] = u;
+            if (distances[currentVertex] + weight < distances[adjacent]) {
+                distances[adjacent] = distances[currentVertex] + weight;
+                pq.push({distances[adjacent], adjacent});
             }
         }
     }
-    // Display all distances and paths
-    std::cout << "Dijkstra List: " << std::endl;
-    for(int i = 0; i < _numVertices; i++){
-        if (i == startVertex) continue; // Skip start vertex
-        std::cout << "Distance from " << startVertex+1 << " to " << i+1 << " is " << distance[i];
-        if(distance[i] == INT_MAX){
-            std::cout << " (No path)" << std::endl;
-        } else {
-            std::cout << " Path: ";
-                std::vector<int> path;
-                for (int at = i; at != -1; at = predecessor[at]) { //   Construct path
-                    path.insert(path.begin(), at);  // Insert at the    beginning
-                }
-                for (int v : path) { // Print path
-                    std::cout << v+1 << " ";
-                }
-            std::cout << std::endl;
+    // Print or process distances
+    for (int i = 0; i < _numVertices; i++) {
+        if(distances[i] != std::numeric_limits<int>::max()){
+            if(i == startVertex){
+                continue;
+            }else{
+                std::cout << "Najkrótsza ścieżka od wierzchołka " << startVertex << " do wierzchołka " << i << " wynosi " << distances[i] << std::endl;
+            }
         }
+        std::cout << "Brak połączenia między wierzchołkiem " << startVertex << " a " << i << std::endl;
     }
 }
 void ListGraph::dijkstraAlgorithmToPoint(int startVertex, int endVertex) {
-    if(startVertex >= _numVertices || endVertex >= _numVertices || startVertex < 0 || endVertex < 0){
-        throw std::out_of_range("Vertex index out of valid range");
-    }
-    if(startVertex == endVertex){
-        throw std::invalid_argument("Start and end vertex are the same");
-    }
-    std::vector<int> distance(_numVertices, INT_MAX); // Initialize distances to all vertices as infinity
-    std::vector<bool> visited(_numVertices, false); // Initialize all vertices as not visited
-    std::vector<int> predecessor(_numVertices, -1); //  Initialize all predecessors as -1
-    distance[startVertex] = 0; // Distance from start vertex to itself is 0
-    for(int i = 0; i < _numVertices - 1; i++){ // Find shortest path for all vertices
-        int u = -1;
-        for(int j = 0; j < _numVertices; j++){ // Find the vertex with the minimum distance
-            if(!visited[j] && (u == -1 || distance[j] < distance[u])){
-                u = j;
-            }
+    std::vector<int> distances(_numVertices, std::numeric_limits<int>::max());
+    std::vector<bool> visited(_numVertices, false);
+    std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<std::pair<int, int>>> pq;
+
+    distances[startVertex] = 0;
+    pq.push({0, startVertex});
+
+    while (!pq.empty()) {
+        int currentVertex = pq.top().second;
+        pq.pop();
+
+        // if the current vertex is the end vertex, print the distance and return
+        if (currentVertex == endVertex) {
+            std::cout << "Najkrótsza ścieżka od wierzchołka " << startVertex << " do wierzchołka " << endVertex << " wynosi " << distances[currentVertex] << std::endl;
+            return; // end the function
         }
-        visited[u] = true; 
-        for(const auto& edge : _adjacencyList[u]){ // Update distances to all adjacent vertices
-            int v = edge.first;
+
+        if (visited[currentVertex]) continue;
+        visited[currentVertex] = true;
+
+        for (const auto& edge : _adjacencyList[currentVertex]) {
+            int adjacent = edge.first;
             int weight = edge.second;
-            if(distance[u] != INT_MAX && distance[u] + weight < distance[v]){
-                distance[v] = distance[u] + weight;
-                predecessor[v] = u;
+            if (distances[currentVertex] + weight < distances[adjacent]) {
+                distances[adjacent] = distances[currentVertex] + weight;
+                pq.push({distances[adjacent], adjacent});
             }
         }
     }
-    // Display distance and path
-    std::cout << "Dijkstra List: " << std::endl;
-    std::cout << "Distance from " << startVertex+1 << " to " << endVertex+1;
-    // Display distance and path
-    if (distance[endVertex] == INT_MAX) { // If there is no path
-        std::cout << ":No path" << std::endl;
-    } else {
-        std::cout << " is " << distance[endVertex] << " Path: ";
-        std::vector<int> path;
-        for (int at = endVertex; at != -1; at = predecessor[at]) { // Construct path
-            path.insert(path.begin(), at);
-        }
-        for (int v : path) { // Print path
-            std::cout << v+1 << " ";
-        }
-    }
-    std::cout << std::endl;
+
+    //if the function reaches this point, it means that there is no path from startVertex to endVertex
+    std::cout << "Ścieżka od wierzchołka " << startVertex << " do wierzchołka " << endVertex << " nie istnieje." << std::endl;
 }

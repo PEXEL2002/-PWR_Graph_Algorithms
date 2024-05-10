@@ -7,6 +7,7 @@
 #include <list>
 #include <string>
 #include <stdexcept>
+#include <queue>
 
 class ListGraph : public Graph {
 private:
