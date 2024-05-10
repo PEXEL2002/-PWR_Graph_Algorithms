@@ -11,7 +11,7 @@
 
 class ListGraph : public Graph {
 private:
-    std::vector<std::list<std::pair<int, int>>> _adjacencyList;
+    std::vector<std::vector<std::pair<int, int>>> _adjacencyList;
     int _numVertices;
 
 public:

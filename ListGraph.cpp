@@ -15,21 +15,22 @@ ListGraph::ListGraph(const std::string& filePath) {
     while (getline(file, line)) {
         std::istringstream iss(line);
         std::string token;
-        std::list<std::pair<int, int>> vertexList;
+        std::vector<std::pair<int, int>> vertexVector;
 
         while (iss >> token) {
             int pos = token.find('(');
             int endPos = token.find(')');
             int vertex = std::stoi(token.substr(0, pos));
             int weight = std::stoi(token.substr(pos + 1, endPos - pos - 1));
-            vertexList.push_back({vertex, weight});
+            vertexVector.push_back({vertex, weight});
         }
-        _adjacencyList.push_back(vertexList);
+        _adjacencyList.push_back(vertexVector);
         _numVertices++;
     }
     file.close();
 }
 ListGraph::~ListGraph(){}
+
 void ListGraph::addEdge(int v, int w, int weight) {
     if (v >= _numVertices || w < 0) {
         throw std::out_of_range("Vertex index out of valid range");
@@ -57,9 +58,11 @@ void ListGraph::dijkstraAlgorithmToAll(int startVertex) {
     while (!pq.empty()) {
         int currentVertex = pq.top().second;
         pq.pop();
+
         if (visited[currentVertex]) continue;
         visited[currentVertex] = true;
-        for (const auto& edge : _adjacencyList[currentVertex]) { // for each edge in the adjacency list of the current vertex
+
+        for (const auto& edge : _adjacencyList[currentVertex]) {
             int adjacent = edge.first;
             int weight = edge.second;
             if (distances[currentVertex] + weight < distances[adjacent]) {
@@ -68,16 +71,14 @@ void ListGraph::dijkstraAlgorithmToAll(int startVertex) {
             }
         }
     }
-    // Print or process distances
+
+    // Print distances
     for (int i = 0; i < _numVertices; i++) {
-        if(distances[i] != std::numeric_limits<int>::max()){
-            if(i == startVertex){
-                continue;
-            }else{
-                std::cout << "Najkrótsza ścieżka od wierzchołka " << startVertex << " do wierzchołka " << i << " wynosi " << distances[i] << std::endl;
-            }
+        if (distances[i] != std::numeric_limits<int>::max()) {
+            std::cout << "Najkrótsza ścieżka od wierzchołka " << startVertex << " do wierzchołka " << i << " wynosi " << distances[i] << std::endl;
+        } else {
+            std::cout << "Brak połączenia między wierzchołkiem " << startVertex << " a " << i << std::endl;
         }
-        std::cout << "Brak połączenia między wierzchołkiem " << startVertex << " a " << i << std::endl;
     }
 }
 void ListGraph::dijkstraAlgorithmToPoint(int startVertex, int endVertex) {
