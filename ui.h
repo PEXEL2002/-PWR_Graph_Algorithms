@@ -15,6 +15,12 @@ void generateGraphData(int vertices, int density, std::string fileName = "");
 */
 int generateVertices(int maxVertices);
 /**
+ * @brief Funkcja wypiująca wektor
+ * @param vec wektor
+ * @param startVertex wierzchołek startowy
+*/
+void printVector(std::vector<int>& vec, int startVertex)
+/**
  * @brief Funkcja przprowadzająca algorytm Dijkstry do wszystkich wierzchołków
  * @param mG graf w postaci macierzy sąsiedztwa
  * @param lG graf w postaci listy sąsiedztwa

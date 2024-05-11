@@ -79,45 +79,64 @@ void generateGraphData(int vertices, int density, std::string fileName = "") {
 int generateVertices(int maxVertices){
     return rand() % maxVertices;
 }
+void printVector(std::vector<int>& vec, int startVertex) {
+    for (int i = 0; i < vec.size(); i++) {
+        if(vec[i] != std::numeric_limits<int>::max()){
+            if(i == startVertex){
+                continue;
+            }else{
+                std::cout << "Najkrótsza ścieżka od wierzchołka " << startVertex << " do wierzchołka " << i << " wynosi " << vec[i] << std::endl;
+            }
+        }else{
+            std::cout << "Brak połączenia między wierzchołkiem " << startVertex << " a " << i << std::endl;
+        }
+    }
+}
 void uiDijkstraAll(MatrixGraph& mG, ListGraph& lG) {
+    std::vector<int> distances;
     int startVertex;
     std::cout << "Podaj wierzchołek startowy: ";
     std::cin >> startVertex;
     auto start1 = std::chrono::high_resolution_clock::now();
-    mG.dijkstraAlgorithmToAll(startVertex);
+    distances = mG.dijkstraAlgorithmToAll(startVertex);
     auto end1 = std::chrono::high_resolution_clock::now();
     auto duration1 = std::chrono::duration_cast<std::chrono::nanoseconds>(end1 - start1);
-
+    std::cout << "Macierz: \n";
+    printVector(distances, startVertex);
     auto start2 = std::chrono::high_resolution_clock::now();
-    lG.dijkstraAlgorithmToAll(startVertex);
+    distances = lG.dijkstraAlgorithmToAll(startVertex);
     auto end2 = std::chrono::high_resolution_clock::now();
     auto duration2 = std::chrono::duration_cast<std::chrono::nanoseconds>(end2 - start2);
-
+    std::cout << "Lista: \n";
+    printVector(distances, startVertex);
     std::cout << "Czas wykonania: \n";
     std::cout << "Macierz | " << duration1.count() << "ns\n";
-    std::cout << "Lista   |" << duration2.count() << "ns\n";
+    std::cout << "Lista   | " << duration2.count() << "ns\n";
 }
 
 void uiDijkstraToPoint(MatrixGraph& mG, ListGraph& lG) {
     int startVertex;
     int endVertex;
+    int distance;
     std::cout << "Podaj wierzchołek startowy: ";
     std::cin >> startVertex;
     std::cout << "Podaj wierzchołek końcowy: ";
     std::cin >> endVertex;
     auto start1 = std::chrono::high_resolution_clock::now();
-    mG.dijkstraAlgorithmToPoint(startVertex, endVertex);
+    distance = mG.dijkstraAlgorithmToPoint(startVertex, endVertex);
     auto end1 = std::chrono::high_resolution_clock::now();
     auto duration1 = std::chrono::duration_cast<std::chrono::nanoseconds>(end1 - start1);
-
+    std::cout << "Macierz: \n";
+    std::cout << "Najkrótsza ścieżka od wierzchołka " << startVertex << " do wierzchołka " << endVertex << " wynosi " << distance << std::endl;
     auto start2 = std::chrono::high_resolution_clock::now();
-    lG.dijkstraAlgorithmToPoint(startVertex, endVertex);
+    distance = lG.dijkstraAlgorithmToPoint(startVertex, endVertex);
     auto end2 = std::chrono::high_resolution_clock::now();
     auto duration2 = std::chrono::duration_cast<std::chrono::nanoseconds>(end2 - start2);
-
+    std::cout << "Lista: \n";
+    std::cout << "Najkrótsza ścieżka od wierzchołka " << startVertex << " do wierzchołka " << endVertex << " wynosi " << distance << std::endl;
     std::cout << "Czas wykonania: \n";
     std::cout << "Macierz | " << duration1.count() << "ns\n";
-    std::cout << "Lista   |" << duration2.count() << "ns\n";
+    std::cout << "Lista   | " << duration2.count() << "ns\n";
 }
 
 void uiprintGraph(MatrixGraph& mG, ListGraph& lG) {
@@ -145,6 +164,7 @@ void testGraph() {
             timeMatrix = 0;
             timeList = 0;
             for (int i = 0; i < 100; i++) {
+                std::cout << "Test " << i << " " << vertices << " " << dens << std::endl;
                 generateGraphData(vertices, dens, "test");
                 startVertex = generateVertices(vertices);
                 endVertex = generateVertices(vertices);
