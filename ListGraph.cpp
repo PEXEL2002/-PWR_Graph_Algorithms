@@ -71,7 +71,7 @@ void ListGraph::dijkstraAlgorithmToAll(int startVertex) {
             }
         }
     }
-
+    std::cout << "Lista sąsiedztwa: " << std::endl;
     // Print distances
     for (int i = 0; i < _numVertices; i++) {
         if (distances[i] != std::numeric_limits<int>::max()) {
@@ -95,6 +95,7 @@ void ListGraph::dijkstraAlgorithmToPoint(int startVertex, int endVertex) {
 
         // if the current vertex is the end vertex, print the distance and return
         if (currentVertex == endVertex) {
+            std::cout << "Lista sąsiedztwa: " << std::endl;
             std::cout << "Najkrótsza ścieżka od wierzchołka " << startVertex << " do wierzchołka " << endVertex << " wynosi " << distances[currentVertex] << std::endl;
             return; // end the function
         }
@@ -107,11 +108,13 @@ void ListGraph::dijkstraAlgorithmToPoint(int startVertex, int endVertex) {
             int weight = edge.second;
             if (distances[currentVertex] + weight < distances[adjacent]) {
                 distances[adjacent] = distances[currentVertex] + weight;
-                pq.push({distances[adjacent], adjacent});
+                if (!visited[adjacent]) { // Dodajemy do kolejki tylko jeśli wierzchołek nie został odwiedzony
+                    pq.push({distances[adjacent], adjacent});
+                }
             }
         }
     }
-
+    std::cout << "Lista sąsiedztwa: " << std::endl;
     //if the function reaches this point, it means that there is no path from startVertex to endVertex
     std::cout << "Ścieżka od wierzchołka " << startVertex << " do wierzchołka " << endVertex << " nie istnieje." << std::endl;
 }
