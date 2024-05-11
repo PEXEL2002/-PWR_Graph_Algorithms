@@ -49,7 +49,7 @@ void MatrixGraph::print() {
         std::cout << std::endl;
     }
 }
-void MatrixGraph::dijkstraAlgorithmToAll(int startVertex) {
+std::vector<int> MatrixGraph::dijkstraAlgorithmToAll(int startVertex) {
     std::vector<int> distances(_numVertices, std::numeric_limits<int>::max());
     std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<std::pair<int, int>>> pq;
 
@@ -70,42 +70,23 @@ void MatrixGraph::dijkstraAlgorithmToAll(int startVertex) {
             }
         }
     }
-    std::cout << "Macierz sąsiectwa";
-    // Print or process distances
-    for (int i = 0; i < _numVertices; i++) {
-        if(distances[i] != std::numeric_limits<int>::max()){
-            if(i == startVertex){
-                continue;
-            }else{
-                std::cout << "Najkrótsza ścieżka od wierzchołka " << startVertex << " do wierzchołka " << i << " wynosi " << distances[i] << std::endl;
-            }
-        }else{
-            std::cout << "Brak połączenia między wierzchołkiem " << startVertex << " a " << i << std::endl;
-        }
-        
-    }
+    return distances;
 }
-void MatrixGraph::dijkstraAlgorithmToPoint(int startVertex, int endVertex) {
+int MatrixGraph::dijkstraAlgorithmToPoint(int startVertex, int endVertex) {
     std::vector<int> distances(_numVertices, std::numeric_limits<int>::max());
     std::vector<bool> visited(_numVertices, false);
     std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<std::pair<int, int>>> pq;
-
     distances[startVertex] = 0;
     pq.push({0, startVertex});
-
     while (!pq.empty()) { // while there are still vertices to visit
         int currentVertex = pq.top().second;
         pq.pop();
         // if currentVertex is the endVertex, print the distance and return
         if (currentVertex == endVertex) {
-            std::cout << "Macierz sąsiedztwa: " << std::endl;
-            std::cout << "Najkrótsza ścieżka od wierzchołka " << startVertex << " do wierzchołka " << endVertex << " wynosi " << distances[currentVertex] << std::endl;
-            return;
+            return distances[currentVertex];
         }
-
         if (visited[currentVertex]) continue;
         visited[currentVertex] = true;
-
         for (int adjacent = 0; adjacent < _numVertices; adjacent++) { // iterate through all vertices
             if (_adjMatrix[currentVertex][adjacent] != 0) {
                 int weight = _adjMatrix[currentVertex][adjacent];
@@ -116,7 +97,5 @@ void MatrixGraph::dijkstraAlgorithmToPoint(int startVertex, int endVertex) {
             }
         }
     }
-    std::cout << "Macierz sąsiectwa";
-    // if the function reaches here, there is no path from startVertex to endVertex
-    std::cout << "Ścieżka od wierzchołka " << startVertex << " do wierzchołka " << endVertex << " nie istnieje." << std::endl;
+    return -1;   
 }
