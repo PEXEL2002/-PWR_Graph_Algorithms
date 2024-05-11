@@ -127,13 +127,21 @@ void uiDijkstraToPoint(MatrixGraph& mG, ListGraph& lG) {
     auto end1 = std::chrono::high_resolution_clock::now();
     auto duration1 = std::chrono::duration_cast<std::chrono::nanoseconds>(end1 - start1);
     std::cout << "Macierz: \n";
-    std::cout << "Najkrótsza ścieżka od wierzchołka " << startVertex << " do wierzchołka " << endVertex << " wynosi " << distance << std::endl;
+    if(distance == -1){
+        std::cout << "Brak połączenia między wierzchołkiem " << startVertex << " a " << endVertex << std::endl;
+    }else{
+        std::cout << "Najkrótsza ścieżka od wierzchołka " << startVertex << " do wierzchołka " << endVertex << " wynosi " << distance << std::endl;
+    }
     auto start2 = std::chrono::high_resolution_clock::now();
     distance = lG.dijkstraAlgorithmToPoint(startVertex, endVertex);
     auto end2 = std::chrono::high_resolution_clock::now();
     auto duration2 = std::chrono::duration_cast<std::chrono::nanoseconds>(end2 - start2);
     std::cout << "Lista: \n";
-    std::cout << "Najkrótsza ścieżka od wierzchołka " << startVertex << " do wierzchołka " << endVertex << " wynosi " << distance << std::endl;
+    if(distance == -1){
+        std::cout << "Brak połączenia między wierzchołkiem " << startVertex << " a " << endVertex << std::endl;
+    }else{
+        std::cout << "Najkrótsza ścieżka od wierzchołka " << startVertex << " do wierzchołka " << endVertex << " wynosi " << distance << std::endl;
+    }
     std::cout << "Czas wykonania: \n";
     std::cout << "Macierz | " << duration1.count() << "ns\n";
     std::cout << "Lista   | " << duration2.count() << "ns\n";
