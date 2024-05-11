@@ -38,12 +38,14 @@ public:
 /**
  * @brief Funkcja implementująca algorytm Dijkstry do wszystkich wierzchołków
  * @param startVertex wierzchołek startowy
+ * @return wektor z odległościami do wszystkich wierzchołków
 */
-    void dijkstraAlgorithmToAll(int startVertex) override;
+    std::vector<int> dijkstraAlgorithmToAll(int startVertex) override;
 /**
  * @brief Funkcja implementująca algorytm Dijkstry do wszystkich wierzchołków
  * @param startVertex wierzchołek startowy
  * @param endVertex wierzchołek końcowy
+ * @return waga najkrótszej ścieżki
 */
-    void dijkstraAlgorithmToPoint(int startVertex, int endVertex) override;
+    int dijkstraAlgorithmToPoint(int startVertex, int endVertex) override;
 };
